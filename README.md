@@ -1,4 +1,4 @@
-# Reconnecting WebSocket
+# Scroll restore
 ![Static Badge](https://img.shields.io/badge/Vue.js-plugin-green)
 ![npm](https://img.shields.io/npm/dt/%40sergtyapkin%2Fscroll-restore)
 
@@ -21,9 +21,6 @@ const app = createApp(App)
   .use(Router)
   .use(ScrollRestore, Router, [
     'events',
-    'achievements',
-    'ratings',
-    'doc',
     'docs',
   ], document.body)
   .mount('#app');
