@@ -1,17 +1,36 @@
 {
   "name": "@sergtyapkin/scroll-restore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "license": "MIT",
   "author": {
     "name": "Sergey Tyapkin",
     "email": "Sererga115@gmail.com"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "modal",
+    "popup",
+    "prompt",
+    "alert",
+    "confirm"
+  ],
   "homepage": "https://github.com/SergTyapkin/js-scroll-restore",
-  "scripts": {
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SergTyapkin/js-scroll-restore.git"
   },
+  "bugs": {
+    "url": "https://github.com/SergTyapkin/js-scroll-restore/issues"
+  },
+  "scripts": {},
   "dependencies": {
   },
   "devDependencies": {
+    "@types/node": "^22.7.3",
+    "@types/vue": "^2.0.0",
+    "@types/vue-router": "^2.0.0",
+    "typescript": "^5.6.2"
   }
 }

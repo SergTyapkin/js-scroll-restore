@@ -8,7 +8,7 @@
 Example on Vue framework:
 
 ```JS 
-// index.js
+// index.ts
 
 import { createApp } from 'vue';
 import createVueRouter from './Router.js'
