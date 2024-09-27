@@ -36,7 +36,7 @@ export class ScrollRestore {
     this.newHrefCount = 0;
     this.prevPageChangeDetectHref = this.prevHref;
     this._onScrollListener = () => {
-      this._onScroll()
+      this._onScroll();
     };
     this.workingElement.addEventListener("scroll", this._onScrollListener);
   }
