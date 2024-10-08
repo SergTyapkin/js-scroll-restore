@@ -25,8 +25,7 @@
     "url": "https://github.com/SergTyapkin/js-scroll-restore/issues"
   },
   "scripts": {
-    "build": "tsc",
-    "publish": "npm publish --access public"
+    "build": "tsc"
   },
   "dependencies": {
   },
