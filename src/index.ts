@@ -1,5 +1,6 @@
 // Make Vue plugin: vue.use(<imported ScrollRestore>, restorationHrefsAllowed, HTMLElement);
 import {type Router} from "vue-router"
+import {getScrollTopLeft, scrollSmoothly, scrollSmoothlyStop, setScrollTopLeft} from "./scrollSmoothly";
 
 export default {
   install: (app: any, router: Router, restorationHrefsAllowed?: string[], workingElement?: HTMLElement | Window) => {
@@ -13,7 +14,7 @@ export class ScrollRestore {
   restorationMap: {
     [index: string]: [number, number]
   }
-  restorationHrefsAllowed?: RegExp[]
+  restorationHrefsAllowed: RegExp[]
   workingElement: HTMLElement | Window
   prevHref: string
   curHref: string
@@ -27,9 +28,12 @@ export class ScrollRestore {
     this.$app = app;
     this.$router = router;
     this.workingElement = workingElement;
-    this.restorationHrefsAllowed = restorationHrefsAllowed?.map((pageHref) =>
-      RegExp(this.$router.resolve(pageHref).fullPath)
-    ) || [];
+    this.restorationHrefsAllowed = [];
+    if (restorationHrefsAllowed) {
+      this.restorationHrefsAllowed = restorationHrefsAllowed?.map((pageHref) =>
+        RegExp(this.$router.resolve(pageHref).fullPath)
+      );
+    }
     this.restorationMap = {};
     this.prevHref = this._getHref();
     this.curHref = this.prevHref;
@@ -39,6 +43,16 @@ export class ScrollRestore {
       this._onScroll();
     };
     this.workingElement.addEventListener("scroll", this._onScrollListener);
+    this.$router.afterEach(async (to, from) => {
+      const isInDenyList = this.restorationHrefsAllowed.reduce((sum, cur) => sum || cur.test(to.fullPath), false);
+      if (!isInDenyList || (from.name === to.name)) {
+        requestAnimationFrame(() => {
+          scrollSmoothly(this.workingElement, 0);
+        });
+      } else {
+        scrollSmoothlyStop();
+      }
+    });
   }
 
   destructor() {
@@ -50,15 +64,7 @@ export class ScrollRestore {
   }
 
   _onScroll() {
-    let offsetTop: number;
-    let offsetLeft: number;
-    if (this.workingElement instanceof Window) {
-      offsetTop = this.workingElement.scrollY;
-      offsetLeft = this.workingElement.scrollX;
-    } else {
-      offsetTop = this.workingElement.scrollTop;
-      offsetLeft = this.workingElement.scrollLeft;
-    }
+    const {top: offsetTop, left: offsetLeft} = getScrollTopLeft(this.workingElement);
     const href = this._getHref();
 
     // console.log("CUR", href, this.prevHref, this.curHref, this.prevPageChangeDetectHref);
@@ -88,14 +94,7 @@ export class ScrollRestore {
     const href = this._getHref();
     const savedScroll = this.restorationMap[href];
     console.log("RESTORE SCROLL:", href, this.restorationMap);
-    if (savedScroll !== undefined) {
-      if (this.workingElement instanceof Window) {
-        this.workingElement.scrollTo(savedScroll[0], savedScroll[1]);
-      } else {
-        this.workingElement.scrollTop = savedScroll[0];
-        this.workingElement.scrollLeft = savedScroll[1];
-      }
-    }
+    setScrollTopLeft(this.workingElement, savedScroll[0], savedScroll[1])
   }
 
   clearSavedPageScroll(href?: string) {
@@ -108,3 +107,5 @@ export class ScrollRestore {
     this.restorationMap = {};
   }
 }
+
+export {scrollSmoothly, scrollSmoothlyStop};
